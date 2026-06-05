@@ -2,15 +2,44 @@ import streamlit as st
 import requests
 import pandas as pd
 
-st.set_page_config(page_title="Kamino Multiply Comprehensive Tracker", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Kamino Multiply Terminal", page_icon="⚡", layout="wide")
 
-st.title("⚡ Kamino Ultra-Multiply: Complete SOL & LST Multi-Market Tracker")
-st.markdown("This terminal analyzes and decomposes loop mathematics for all major Solana LSTs across Kamino markets.")
+# Custom CSS injected to style the cards beautifully on mobile and desktop
+st.markdown("""
+    <style>
+    .metric-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .badge {
+        background-color: #2e7d32;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .market-badge {
+        background-color: #1976d2;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    </style>
+""", unsafe_with_html=True)
+
+st.title("⚡ Kamino Ultra-Multiply: SOL Yield Engine")
+st.markdown("Real-time automated looping optimization across diverse Solana LST environments.")
 st.markdown("---")
 
 @st.cache_data(ttl=60)
 def get_kamino_data():
-    # Fetching from the main aggregated metrics routing engine
     url = "https://api.kamino.finance/kamino-market/7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF/reserves/metrics"
     try:
         response = requests.get(url, timeout=10)
@@ -22,20 +51,20 @@ def get_kamino_data():
 
 raw_data, using_fallbacks = get_kamino_data()
 
-# 1. EXPANDED LIST: Comprehensive Solana LST Staking Database
+# Comprehensive Solana LST Staking Database
 LST_STAKING_YIELDS = {
     "JitoSOL": 7.35,
     "mSOL": 7.15,
     "bSOL": 6.95,
     "jupSOL": 7.85,
-    "stkeSOL": 8.10,   # STKE SOL Strategy
-    "picSOL": 7.40,    # Pico SOL
-    "hubSOL": 7.65,    # Solhub
-    "vSOL": 7.20,      # Vice/Vigil SOL
-    "infSOL": 7.90     # Infinity SOL
+    "stkeSOL": 8.10,
+    "picSOL": 7.40,
+    "hubSOL": 7.65,
+    "vSOL": 7.20,
+    "infSOL": 7.90
 }
 
-# 2. EXPANDED RISK RULES: Maximum Allowed LTV (Loan-To-Value) for absolute leverage metrics
+# Maximum Allowed LTV (Loan-To-Value) parameters per Kamino risk models
 LST_RISK_PARAMETERS = {
     "JitoSOL": {"ltv": 0.90, "market": "Kamino Main Market"},
     "mSOL": {"ltv": 0.88, "market": "Kamino Main Market"},
@@ -63,7 +92,6 @@ if not using_fallbacks and isinstance(raw_data, list):
             "available": available_liquidity, "capacity": max_capacity
         }
 else:
-    # Populating broad structural data metrics
     for token in LST_STAKING_YIELDS.keys():
         kamino_metrics[token] = {"supply": 0.25, "borrow": 7.90, "reward": 0.40, "available": 15000, "capacity": 100000}
     kamino_metrics["SOL"] = {"supply": 0.15, "borrow": 6.85, "reward": 0.00, "available": 50000, "capacity": 500000}
@@ -75,7 +103,7 @@ if using_fallbacks:
 else:
     st.success("🟢 Connected live to Kamino Cross-Market API Registries.")
 
-# 3. ADVANCED CALCULATION LOOP WITH YIELD DECOMPOSITION
+# Process Strategy Matrices
 processed_pairs = []
 
 for lst_name, staking_yield in LST_STAKING_YIELDS.items():
@@ -89,11 +117,9 @@ for lst_name, staking_yield in LST_STAKING_YIELDS.items():
     ltv = risk_info["ltv"]
     market_origin = risk_info["market"]
     
-    # Calculate Dynamic Leverage Cap
     max_leverage = 1.0 / (1.0 - ltv)
     debt_multiplier = max_leverage - 1.0
     
-    # Mathematical Decomposition Formulation
     leveraged_staking = max_leverage * staking_yield
     leveraged_supply = max_leverage * supply_apy
     leveraged_rewards = max_leverage * reward_apy
@@ -103,56 +129,87 @@ for lst_name, staking_yield in LST_STAKING_YIELDS.items():
     net_apy = gross_loop_yield - total_borrow_cost
     
     processed_pairs.append({
-        "Asset Pairing": f"{lst_name} / SOL",
-        "Target Market": market_origin,
-        "Max Leverage": f"{max_leverage:.2f}x",
-        "Base Staking APY": f"{staking_yield:.2f}%",
-        "Kamino Supply APY": f"{supply_apy:.2f}%",
-        "Kamino Reward APY": f"{reward_apy:.2f}%",
-        "Leveraged Staking Yield": f"{leveraged_staking:.2f}%",
-        "Leveraged Supply APY": f"{leveraged_supply:.2f}%",
-        "Leveraged Reward APY": f"{leveraged_rewards:.2f}%",
-        "Total Gross Loop APY": f"{gross_loop_yield:.2f}%",
-        "SOL Debt Cost": f"-{total_borrow_cost:.2f}%",
-        "Net Loop APY (Float)": net_apy,
-        "Net Loop APY": f"{net_apy:.2f}%",
-        "Available Liquidity": f"{available_tokens:,.0f} {lst_name}",
-        "Vault Capacity Limit": f"{max_capacity:,.0f} {lst_name}"
+        "name": lst_name,
+        "pairing": f"{lst_name} / SOL",
+        "market": market_origin,
+        "max_leverage": max_leverage,
+        "base_staking": staking_yield,
+        "base_supply": supply_apy,
+        "base_reward": reward_apy,
+        "lev_staking": leveraged_staking,
+        "lev_supply": leveraged_supply,
+        "lev_reward": leveraged_rewards,
+        "gross_apy": gross_loop_yield,
+        "borrow_cost": total_borrow_cost,
+        "net_apy": net_apy,
+        "available": available_tokens,
+        "capacity": max_capacity
     })
 
-df = pd.DataFrame(processed_pairs)
-df = df.sort_values(by="Net Loop APY (Float)", ascending=False).drop(columns=["Net Loop APY (Float)"])
+# Sort strategies by highest yield
+processed_pairs = sorted(processed_pairs, key=lambda x: x["net_apy"], reverse=True)
 
-# 4. GRAPHICAL DISPLAY INTERFACE
-st.write("### Comprehensive Multi-Market Strategy Grid")
-display_cols = ["Asset Pairing", "Target Market", "Max Leverage", "Total Gross Loop APY", "SOL Debt Cost", "Net Loop APY"]
-st.dataframe(df[display_cols].set_index("Asset Pairing"), use_container_width=True)
+# 2. RENDER STRATEGIES IN USER-FRIENDLY CARDS
+st.write("### Active Multiply Opportunities")
 
-st.write("---")
-st.write("### Complete Analytical Breakdown Matrix (Yield Source Decomposition & Capacities)")
+for idx, strategy in enumerate(processed_pairs):
+    # Creating a cleaner visual card boundary using a streamlit container
+    with st.container():
+        st.markdown(f"""
+        <div class="metric-card">
+            <span class="market-badge">{strategy['market']}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <h2 style="margin: 0;">{strategy['pairing']}</h2>
+                <h1 style="margin: 0; color: #00e676;">{strategy['net_apy']:.2f}% <span style="font-size: 14px; color: #888;">NET APY</span></h1>
+            </div>
+            <p style="margin: 5px 0 0 0; color: #aaa;">Max Multiplier: <b>{strategy['max_leverage']:.2f}x Leverage</b></p>
+        </div>
+        """, unsafe_with_html=True)
+        
+        # Expandable Detail Container nestled directly underneath the Card header
+        with st.expander("🔍 View Math & Capacity Breakdown"):
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("#### 📊 Yield Deconstruction")
+                st.write(f"📈 **Leveraged Staking Yield:** +{strategy['lev_staking']:.2f}% *(Base: {strategy['base_staking']:.2f}%)*")
+                st.write(f"📈 **Leveraged Supply APY:** +{strategy['lev_supply']:.2f}% *(Base: {strategy['base_supply']:.2f}%)*")
+                st.write(f"🎁 **Leveraged Mining Rewards:** +{strategy['lev_reward']:.2f}% *(Base: {strategy['base_reward']:.2f}%)*")
+                st.write(f"🛑 **Gross Multiplied Yield:** {strategy['gross_apy']:.2f}%")
+                st.write(f"📉 **Subtracted SOL Debt Cost:** -{strategy['borrow_cost']:.2f}% *(Base SOL Borrow: {sol_borrow_apy:.2f}%)*")
+                st.markdown(f"🏆 **Final Realized Return:** `{strategy['net_apy']:.2f}% NET APY`")
+            with col2:
+                st.markdown("#### 🛢️ Vault Capacities")
+                st.write(f"🔓 **Available Liquidity:** {strategy['available']:,.0f} {strategy['name']}")
+                st.write(f"📦 **Max Vault Storage Cap:** {strategy['capacity']:,.0f} {strategy['name']}")
+                
+                # Dynamic Capacity Usage Bar Gauge
+                if strategy['capacity'] > 0:
+                    pct_used = ((strategy['capacity'] - strategy['available']) / strategy['capacity'])
+                    st.progress(min(max(pct_used, 0.0), 1.0), text=f"Vault Utilization: {pct_used*100:.1f}%")
+        st.markdown("<br>", unsafe_with_html=True)
 
-# Display complete transparency row logs
-for idx, row in df.iterrows():
-    with st.expander(f"🔍 Detailed Math & Capacity Profile: {row['Asset Pairing']} ({row['Target Market']})", expanded=True):
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown("**Leverage & Market Metadata**")
-            st.markdown(f"- **Home Market Platform:** {row['Target Market']}")
-            st.markdown(f"- **Applied Max Leverage:** {row['Max Leverage']}")
-            st.markdown(f"- **Available Liquidity Capacity:** {row['Available Liquidity']}")
-            st.markdown(f"- **Max Pool Caps:** {row['Vault Capacity Limit']}")
-        with c2:
-            st.markdown("**Unleveraged Inputs (1x base)**")
-            st.markdown(f"- **Native Validation Staking:** {row['Base Staking APY']}")
-            st.markdown(f"- **Isolated Supply Interest:** {row['Kamino Supply APY']}")
-            st.markdown(f"- **Liquidity Mining Incentives:** {row['Kamino Reward APY']}")
-        with c3:
-            st.markdown("**Leveraged Results (Decomposed Loop Yields)**")
-            st.markdown(f"📈 **Leveraged Staking Earnings:** {row['Leveraged Staking Yield']}")
-            st.markdown(f"📈 **Leveraged Supply Earnings:** {row['Leveraged Supply APY']}")
-            st.markdown(f"🎁 **Leveraged Token Rewards:** {row['Leveraged Reward APY']}")
-            st.markdown(f"📉 **Subtracted Borrow Cost (SOL):** {row['SOL Debt Cost']}")
-            st.markdown(f"🏆 **Final Realized NET APY:** `{row['Net Loop APY']}`")
-
+# 3. EXPLANATION LIST / LEARNING LEGEND AT THE BOTTOM
 st.markdown("---")
-st.caption("_Disclaimer: The underlying mathematical matrix multiplies underlying components linearly relative to debt expansion. Changing structural asset weights or token peg changes could distort metrics._")
+st.markdown("### 📘 Terminal Explanation List & Metric Glossary")
+
+st.markdown("""
+Here is a comprehensive breakdown of how the platform calculates these variables and what each data point implies for your open positions:
+
+* **Asset Pairing (e.g., JitoSOL / SOL)**
+  The process of utilizing a Liquid Staking Token (LST) as collateral to borrow base native SOL, which is then traded back for more LST to loop the yield profile.
+* **Net APY (Net Annual Percentage Yield)**
+  Your true annualized take-home yield. This is computed automatically via the core algorithm: 
+  $$\\text{{Net APY}} = [\\text{{Leverage}} \\times (\\text{{Staking APY}} + \\text{{Supply APY}} + \\text{{Reward APY}})] - [(\\text{{Leverage}} - 1) \\times \\text{{SOL Borrow APY}}]$$
+* **Max Allowed Leverage**
+  The maximum legal multiplier limit before instant liquidation occurs on Kamino. This is driven entirely by the token's **LTV (Loan-To-Value)** parameter. For example, a 90% LTV means you can borrow up to 90% of your collateral's value, translating to a maximum leverage cap of $1 / (1 - 0.90) = 10\\text{{x}}$.
+* **Leveraged Staking Yield**
+  The protocol-level staking rewards generated natively by holding the validation token (e.g., Jito validation or Marinade validation). Because you are leveraged, you earn this underlying staking return across your entire expanded position size.
+* **Kamino Supply APY**
+  The baseline interest rate Kamino pays you simply for depositing your LST into their collateral supply vaults.
+* **Mining Reward APY**
+  Extra token bonus distributions distributed by Kamino or partner foundations (such as bonus \$KMNO tokens) to incentivize providing depth to that specific vault.
+* **SOL Debt Cost**
+  The interest fee accumulation you owe to the protocol for borrowing native SOL to fund your extra loop purchases. This scales based on your debt footprint $(\\text{{Leverage}} - 1)$.
+* **Available Liquidity vs Vault Capacity Limit**
+  Shows how much physical room is left in the strategy vault before it locks. If available liquidity reaches zero, you cannot withdraw or borrow additional amounts until matching pool liquidity changes.
+""")
