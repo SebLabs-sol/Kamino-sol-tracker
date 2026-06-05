@@ -24,7 +24,7 @@ st.markdown("""
         font-weight: bold;
     }
     </style>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
 
 st.title("⚡ Kamino Ultra-Multiply: SOL Yield Engine")
 st.markdown("Real-time automated looping optimization across diverse Solana LST environments.")
@@ -83,7 +83,6 @@ sol_borrow_apy = kamino_metrics.get("SOL", {}).get("borrow", 6.85)
 # Fill gaps for assets with historical baseline statistics to block crash errors
 for token in LST_STAKING_YIELDS.keys():
     if token not in kamino_metrics:
-        # Default safety buffer numbers to maintain uptime when rate-limited
         kamino_metrics[token] = {"supply": 0.25, "borrow": 7.90, "reward": 0.40, "available": 18500, "capacity": 150000}
 
 if using_fallbacks:
@@ -141,7 +140,7 @@ for idx, strategy in enumerate(processed_pairs):
             </div>
             <p style="margin: 5px 0 0 0; color: #aaa;">Max Multiplier: <b>{strategy['max_leverage']:.2f}x Leverage</b></p>
         </div>
-        """, unsafe_with_html=True)
+        """, unsafe_allow_html=True)
         
         with st.expander("🔍 View Math & Capacity Breakdown"):
             col1, col2 = st.columns(2)
@@ -161,7 +160,7 @@ for idx, strategy in enumerate(processed_pairs):
                 if strategy['capacity'] > 0:
                     pct_used = ((strategy['capacity'] - strategy['available']) / strategy['capacity'])
                     st.progress(min(max(pct_used, 0.0), 1.0), text=f"Vault Utilization: {pct_used*100:.1f}%")
-        st.markdown("<br>", unsafe_with_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
 # 4. EXPLANATION LIST / LEARNING LEGEND
 st.markdown("---")
